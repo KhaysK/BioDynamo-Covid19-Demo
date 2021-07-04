@@ -13,19 +13,23 @@
 namespace bdm {
 
 /// Possible Person states.
-enum State { kSusceptible, kInfected, kRecovered };
+enum State { kSusceptible, kRecovered, kVaccinated, kInfected, kNoSymptoms, kIsolated, kDead };
 
 class Person : public Cell {
   BDM_AGENT_HEADER(Person, Cell, 1);
 
  public:
-  Person() {}
-  explicit Person(const Double3& position) : Base(position) {}
-  virtual ~Person() {}
+    Person() {}
+    explicit Person(const Double3& position) : Base(position) {}
+    virtual ~Person() {}
 
-  /// This data member stores the current state of the person.
-  int state_ = State::kSusceptible;
-};
+    /// This data member stores the current state of the person.
+    int state_ = State::kSusceptible;
+
+    ///
+    static int susceptible, recovered, vaccinated, infected, isolated, dead;
+    int incubation = 0;
+}; 
 
 }  // namespace bdm
 

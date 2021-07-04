@@ -37,21 +37,31 @@ inline int Simulate(CommandLineOptions* clo, double seed, ResultData* result,
   };
 
   // Create simulation object
-  Simulation sim(clo, set_param);
+  Simulation sim(clo, set_param, {"measles.json"});
 
   // Get pointers to important objects
   auto* param = sim.GetParam();
   auto* sparam = param->Get<SimParam>();
   auto* random = sim.GetRandom();
 
+  Person::susceptible = sparam->initial_population_susceptible;
+  Person::infected = sparam->initial_population_infected;
+
   auto state = State::kSusceptible;
   // Lambda that creates a new person at specific position in space
   auto person_creator = [&](const Double3& position) {
-    auto* person = new Person(position);
+
+    Double3 new_pos = position;
+    new_pos.back() = 0;
+
+    auto* person = new Person(new_pos);
     // Set the data members of the new person
     person->SetDiameter(sparam->agent_diameter);
     person->state_ = state;
     // Define the persons behavior
+    if(state == State::kInfected){
+      person->AddBehavior(new Die());
+    }
     person->AddBehavior(new Infection());
     person->AddBehavior(new Recovery());
     if (random->Uniform() < sparam->moving_agents_ratio) {
@@ -96,6 +106,16 @@ inline int Simulate(CommandLineOptions* clo, double seed, ResultData* result,
     scheduler->Simulate(sparam->number_of_iterations);
   }
   TransferResult(result, count_op_impl->GetResults());
+
+    std::cout << std::endl << "***********************************************" << std::endl;
+    std::cout << "Simulation Statistics:" << std::endl << std::endl;
+    std::cout << "Number of people infected : " << Person::infected << std::endl;
+    std::cout << "Number of people not infected : " << Person::susceptible << std::endl;
+    std::cout << "Number of people recovered : " << Person::recovered << std::endl;
+    std::cout << "Number of people died : " << Person::dead << std::endl << std::endl;
+    std::cout << "Number of people vaccinated : " << Person::vaccinated << std::endl << std::endl;
+    std::cout << "Number of people isolated : " << Person::isolated << std::endl << std::endl;
+    std::cout << "Total number of people : " << sparam->initial_population_susceptible + sparam->initial_population_infected << std::endl << std::endl;
 
   return 0;
 }

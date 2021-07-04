@@ -128,6 +128,13 @@ void ExperimentFitSimulation(CommandLineOptions* clo,
 
 }  // namespace bdm
 
+int bdm::Person::susceptible = 0;
+int bdm::Person::dead = 0;
+int bdm::Person::isolated = 0;
+int bdm::Person::infected = 0;
+int bdm::Person::recovered = 0;
+int bdm::Person::vaccinated = 0;
+
 int main(int argc, const char** argv) {
   // register parameters that are specific for this simulation
   bdm::Param::RegisterParamGroup(new bdm::SimParam());
@@ -137,7 +144,7 @@ int main(int argc, const char** argv) {
   clo.AddOption<std::string>("mode", "sim-and-analytical");
   clo.AddOption<double>("beta", "0.06719");
   clo.AddOption<double>("gamma", "0.00521");
-  clo.AddOption<uint64_t>("repeat", "10");
+  clo.AddOption<uint64_t>("repeat", "1");
   clo.AddOption<bool>("no-legend", "false");
   auto mode = clo.Get<std::string>("mode");
 
@@ -157,6 +164,7 @@ int main(int argc, const char** argv) {
   } else if (mode == "fit-simulation") {
     bdm::ExperimentFitSimulation(&clo, seeds);
   }
+
 
   std::cout << "Simulation completed successfully!" << std::endl;
   return 0;

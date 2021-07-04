@@ -27,6 +27,11 @@ struct SimParam : public ParamGroup {
   double agent_diameter = 2.0;
   double agent_speed = 5.78594372145249;
   double infection_probablity = 0.285097276954021;
+  double death_probability = 0.001;
+  double vaccination_probability = 0.005;
+  int incubation_period = 5;
+  double end_of_incubation_probability = 0.6;
+  double no_symptoms_probability = 0.33;
 };
 
 }  // namespace bdm
